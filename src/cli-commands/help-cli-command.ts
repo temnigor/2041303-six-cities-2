@@ -1,8 +1,10 @@
+import chalk from 'chalk';
+
 export default class HelpCliCommand {
   public readonly name = '--help';
 
   public async execute ():Promise<void> {
-    console.log(`
+    console.log(chalk.yellow(`
         Программа для подготовки данных для REST API сервера.
         Пример:
             main.js --<command> [--arguments]
@@ -11,6 +13,6 @@ export default class HelpCliCommand {
             --help:                      # печатает этот текст
             --import <path>:             # импортирует данные из TSV
             --generator <n> <path> <url> # генерирует произвольное количество тестовых данных
-        `);
+        `));
   }
 }

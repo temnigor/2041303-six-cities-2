@@ -1,4 +1,5 @@
 import {readFileSync} from 'fs';
+import chalk from 'chalk';
 import { CliCommandInterface } from './cli-command.interface.js';
 
 export default class VersionCliCommands implements CliCommandInterface {
@@ -13,6 +14,6 @@ export default class VersionCliCommands implements CliCommandInterface {
 
   public async execute ():Promise<void> {
     const version = this.readVersion();
-    console.log(version);
+    console.log(chalk.blue(version));
   }
 }
