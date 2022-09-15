@@ -8,6 +8,9 @@ export default class ImportCliCommand implements CliCommandInterface {
 
   public execute(fileName:string):void {
     const readFile = new TSVReader(fileName);
+    if(!fileName){
+      return console.log('Нет импортированного файла');
+    }
     try {
       readFile.read();
       console.log(readFile.toArray());
