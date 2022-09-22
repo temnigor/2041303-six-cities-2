@@ -1,0 +1,6 @@
+# текстовые данные
+
+GET http://localhost:3322/api HTTP/1.1
+
+
+###

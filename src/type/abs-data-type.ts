@@ -4,7 +4,7 @@ export type AbsData = {
   title:string,
   description:string,
   dataAbs:Date,
-  City:string,
+  city:string,
   posterImg:string,
   apartmentsImg:string[],
   premium:boolean,

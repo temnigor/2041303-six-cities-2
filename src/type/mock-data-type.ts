@@ -1,0 +1,20 @@
+export type MockData = {
+  title:string[],
+  description:string[],
+  dataAbs:string[],
+  city:string[],
+  posterImg:string[],
+  apartmentsImg:string[][],
+  premium:number[],
+  favorite:number[],
+  rating:number[],
+  apartmentsType:string[],
+  room:number[],
+  guest:number[],
+  rent:number[],
+  amenity:string[],
+  author:string[],
+  commentCount: number[],
+  coordinatesAbs:string[],
+
+}

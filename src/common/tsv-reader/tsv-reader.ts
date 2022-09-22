@@ -22,7 +22,7 @@ export default class TSVReader implements FileReaderInterface  {
       .map(([title,
         description,
         dataAbs,
-        City,
+        city,
         posterImg,
         apartmentsImg,
         premium,
@@ -38,12 +38,13 @@ export default class TSVReader implements FileReaderInterface  {
         coordinatesAbs
       ]) => {
         const [parallel, length] = coordinatesAbs.split(',');
-        const [name, email, avatarImg,] = author.split(',').map((element)=>element.replace(' ',''));
+        const [firstLastName, email, password, userType, avatarImg,] = author.split(',');
+        const [name,  surname] = firstLastName.split(' ');
         return({
           title,
           description,
           dataAbs: new Date(dataAbs),
-          City,
+          city,
           posterImg,
           apartmentsImg:apartmentsImg.split(','),
           premium: Boolean(+premium.replace(/\D+/g,'')),
@@ -54,7 +55,7 @@ export default class TSVReader implements FileReaderInterface  {
           guest:+guest.replace(/\D+/g,''),
           rent:+rent.replace(/\D+/g,''),
           amenity:amenity.split(',').filter((space)=> space.trim() !== ''),
-          author:{name:name, email:email, avatarImg:avatarImg},
+          author:{name:name, surname:surname, email:email, password:password, userType:Boolean(userType), avatarImg:avatarImg},
           commentCount:+commentCount.replace(/\D+/g,''),
           coordinatesAbs:{latitude:+parallel.replace('latitude:','') ,longitude:+length.replace('longitude:','')}
         });
