@@ -2,7 +2,8 @@ import { CliCommandInterface } from './cli-command.interface.js';
 import got from 'got';
 import { MockData } from '../type/mock-data-type.js';
 import OfferGenerator from '../common/offer-generator/offer-generator.js';
-import { appendFile } from 'fs/promises';
+import chalk from 'chalk';
+import TSVWriter from '../common/tsv-writer/tsv-writer.js';
 
 export default class GenerateCliCommand implements CliCommandInterface {
   public readonly name = '--generate';
@@ -22,13 +23,14 @@ export default class GenerateCliCommand implements CliCommandInterface {
     }
 
     const offerGeneratorString = new OfferGenerator(this.data);
+    const tsvWriter = new TSVWriter(filepath);
 
     for (let i = 0 ; i< offerCount; i++) {
       try{
-        await appendFile(filepath, `${offerGeneratorString.generate()}\n`, 'utf-8');
+        await tsvWriter.write(offerGeneratorString.generate());
       }catch (error){
-        if(error){
-          return console.log(error);
+        if(error instanceof Error){
+          return console.log(chalk.red(error.message));
         }
       }
 

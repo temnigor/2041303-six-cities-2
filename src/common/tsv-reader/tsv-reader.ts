@@ -1,64 +1,32 @@
-import { readFileSync } from 'fs';
-import { AbsData } from '../../type/abs-data-type.js';
+import EventEmitter from 'events';
+import { createReadStream} from 'fs';
 import { FileReaderInterface } from '../file-reader/file-reader.interface.js';
 
-export default class TSVReader implements FileReaderInterface  {
+export default class TSVReader extends EventEmitter implements FileReaderInterface  {
 
-  private rawData = '';
-
-  constructor (public fileName: string) {}
-
-  public read() {
-    this.rawData = readFileSync(this.fileName, {encoding: 'utf-8'});
+  constructor (public fileName: string) {
+    super();
   }
 
-  public toArray ():AbsData[] {
+  public async read():Promise<void> {
+    const stream = createReadStream(this.fileName, {
+      highWaterMark: 16384,
+      encoding: 'utf-8'
+    });
 
-    if(!this.rawData){
-      return [];
+    let lineRead = '';
+    let endLinePosition = -1;
+    let importLineCount = 0;
+
+    for await ( const chang of stream){
+      lineRead+= chang.toString();
+      while((endLinePosition = (lineRead.indexOf('\n')))>=0){
+        const completeRow = lineRead.slice(0, endLinePosition+1);
+        lineRead = lineRead.slice(++endLinePosition);
+        importLineCount++;
+        this.emit('line', completeRow);
+      }
     }
-
-    return this.rawData.split('\n').filter((raw) => raw.trim() !== '').map((line) => line.split('\t'))
-      .map(([title,
-        description,
-        dataAbs,
-        city,
-        posterImg,
-        apartmentsImg,
-        premium,
-        favorite,
-        rating,
-        apartmentsType,
-        room,
-        guest,
-        rent,
-        amenity,
-        author,
-        commentCount,
-        coordinatesAbs
-      ]) => {
-        const [parallel, length] = coordinatesAbs.split(',');
-        const [firstLastName, email, password, userType, avatarImg,] = author.split(',');
-        const [name,  surname] = firstLastName.split(' ');
-        return({
-          title,
-          description,
-          dataAbs: new Date(dataAbs),
-          city,
-          posterImg,
-          apartmentsImg:apartmentsImg.split(','),
-          premium: Boolean(+premium.replace(/\D+/g,'')),
-          favorite: Boolean(+favorite.replace(/\D+/g,'')),
-          rating:+rating.replace(/\D+/g,''),
-          apartmentsType,
-          room:+room.replace(/\D+/g,''),
-          guest:+guest.replace(/\D+/g,''),
-          rent:+rent.replace(/\D+/g,''),
-          amenity:amenity.split(',').filter((space)=> space.trim() !== ''),
-          author:{name:name, surname:surname, email:email, password:password, userType:Boolean(userType), avatarImg:avatarImg},
-          commentCount:+commentCount.replace(/\D+/g,''),
-          coordinatesAbs:{latitude:+parallel.replace('latitude:','') ,longitude:+length.replace('longitude:','')}
-        });
-      });
+    this.emit('end', importLineCount);
   }
 }
