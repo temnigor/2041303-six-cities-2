@@ -1,0 +1,651 @@
+openapi: 3.0.0
+
+info:
+  title: "API сервис для обявлений аренды Six city"
+  description: 'Записи о проекте'
+  version: "1.0.0"
+  contact:
+    name: Nikita Potemkin
+    email: temnigor@gmail.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+tags:
+  - name: user
+    description: Действия с пользователем.
+  - name: rents-offer
+    description: Действия с обявлениями.
+  - name: rents-offer-comments
+    description: Действия с комментариями к обявлениям.
+paths:
+  /user/register:
+    get:
+      tags:
+        - user
+      summary: Регистрация пользователя
+      description: Регистрация пользователя
+
+      requestBody:
+        description: Информация для создания пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createUser'
+        required: true
+
+      responses:
+        '201':
+          description: Пользователь зарегимтрирован.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        '409':
+          description: Пользователь уже существует.
+
+        '400':
+            description: Неправильно оформлен запрос.
+
+  /user/login:
+    post:
+      summary: Авторизация пользователя
+      tags:
+        - user
+      requestBody:
+        description: Для авторизации нужно указать почту и пароль
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/login'
+      responses:
+        '200':
+          description: OK
+
+    get:
+      summary: Проверка состояния пользователя
+
+      tags:
+        - user
+      responses:
+        '200':
+          description: OK (successfully authenticated)
+
+        '401':
+           $ref: "#/components/responses/UnauthorizedError"
+
+
+  /user/{userId}/avatar:
+    post:
+      summary: Обновление Аватара пользователя
+      tags:
+      - user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            $ref: '#/components/schemas/changUser'
+
+      requestBody:
+        description: Загрузите фото в формате jpeg.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/changUser'
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+
+
+
+
+
+  /rents/offer:
+    post:
+      summary: Создание обявления
+      tags:
+      - rents-offer
+
+      requestBody:
+        description: Информация для создания пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createRentsOffer'
+        required: true
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentsOffer'
+
+        '400':
+          description: Обект не передан
+
+    get:
+        summary: Получение списка обявлений
+        tags:
+        - rents-offer
+
+        responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/rentsOffers'
+
+  /rents/offer/{offerId}:
+    get:
+      summary: Получение одного обявления
+      tags:
+      - rents-offer
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/rentsOffer'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentsOffer'
+
+    post:
+      summary: Редактирование обявления
+      tags:
+      - rents-offer
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/rentsOffer'
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rentsOffer'
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentsOffer'
+
+  /rents/offer/{offerId}/delete:
+    post:
+      summary: Удаление Обявления
+      tags:
+      - rents-offer
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/rentsOffer'
+
+      responses:
+        '200':
+          description: OK
+
+
+  /rents/offer/premium:
+    get:
+      summary: Получение Премиальных обявлений
+      tags:
+      - rents-offer
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentsOffer'
+
+  /rents/offer/{userId}/favorite:
+    get:
+      summary: Получение избрынных обявлений
+      tags:
+      - rents-offer
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            $ref: '#/components/schemas/rentsOffer'
+
+
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentsOffers'
+
+    post:
+      summary: Добовление удаление из избранного необходимо передать {favorite:boolean}
+      tags:
+      - rents-offer
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            $ref: '#/components/schemas/rentsOffer'
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/rentsOfferFavoriteStatus'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentsOffer'
+
+  /rents/offer/{offerId}/comments:
+    get:
+      summary: Получение списка коментариев к Обявлению аренды
+      tags:
+      - rents-offer-comments
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/rentsOfferComments'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentsOfferComments'
+
+    post:
+      summary: Создание комментария к Обявлению аренды
+      tags:
+      - rents-offer-comments
+      parameters:
+        - in: path
+          name: offerId
+          required: true
+          schema:
+            $ref: '#/components/schemas/rentsOfferComment'
+
+
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createRentsOfferComment'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/rentsOfferComment'
+security:
+  - OpenID:   # <--- Use the same name as specified in securitySchemes
+      - user_read
+      - user_write
+      - admin
+
+components:
+  securitySchemes:
+    OpenID:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration
+
+  responses:
+    UnauthorizedError:
+      description: API key is missing or invalid
+      headers:
+        WWW_Authenticate:
+          schema:
+            type: string
+
+  schemas:
+
+    createUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          example: 1213aa@asd.com
+
+        firstName:
+          type: string
+          example: Andrey
+
+        lastName:
+          type: string
+          example: Fers
+
+        password:
+          type: string
+          example: 123kl
+
+    login:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 1213aa@asd.com
+
+        password:
+          type: string
+          example: 123kl
+
+    user:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 34kjlasdf132124lkasd
+
+        firstName:
+          type: string
+          example: Andrey
+
+        lastName:
+          type: string
+          example: Fers
+
+        email:
+          type: string
+          example: 1213aa@asd.com
+
+        avatar:
+          type: string
+          example: /img/icon.jpeg
+
+    changUser:
+      type: object
+
+      properties:
+        id:
+          type: string
+          example: 34kjlasdf132124lkasd
+
+        avatar:
+          type: string
+          example: /img/icon.jpeg
+
+    createRentsOffer:
+      type: object
+      properties:
+        title:
+          type: string
+          example: some rents
+
+        description:
+          type: string
+          example:  rents some home
+
+        dataAbs:
+          type: string
+          example: 12 martha 2009
+
+        city:
+          type: string
+          example: Amsterdam
+
+        posterImg:
+          type: string
+          example: ./img/poser.jpeg
+
+        apartmentsImg:
+          type: array
+          items:
+            type: string
+            example: ./img/poser.jpeg
+          maxItems: 12
+
+        premium:
+          type: boolean
+          example: false
+
+        favorite:
+          type: boolean
+          example: true
+
+        rating:
+          type: number
+          example: 3.4
+
+        apartmentsType:
+          type: string
+          example: bungalow
+
+        room:
+          type: number
+          example: 3
+
+        guest:
+          type: number
+          example: 2
+
+        rent:
+          type: number
+          example: 3
+
+        amenity:
+          type: array
+          items:
+            type: string
+            example: Breakfast
+          maxItems: 20
+
+        author:
+          type: object
+          example:
+            $ref: '#/components/schemas/user'
+
+        commentCount:
+          type:  number
+          example: 15
+
+        coordinatesAbs:
+         type: object
+         example: {latitude:number, longitude:number}
+
+    rentsOffer:
+      type: object
+      properties:
+        id:
+          type: string
+          example: kjlafdlka112jadsfkljo11
+
+        title:
+          type: string
+          example: some rents
+
+        description:
+          type: string
+          example:  rents some home
+
+        dataAbs:
+          type: string
+          example: 12 martha 2009
+
+        city:
+          type: string
+          example: Amsterdam
+
+        posterImg:
+          type: string
+          example: ./img/poser.jpeg
+
+        apartmentsImg:
+          type: array
+          items:
+            type: string
+            example: ./img/poser.jpeg
+          maxItems: 12
+
+        premium:
+          type: boolean
+          example: false
+
+        favorite:
+          type: boolean
+          example: true
+
+        rating:
+          type: number
+          example: 3.4
+
+        apartmentsType:
+          type: string
+          example: bungalow
+          pattern: ^example-[0-9a-z]+$^example-[0-9a-z]+$^example-[0-9a-z]+$
+          maxLength: 323
+
+        room:
+          type: number
+          example: 3
+
+        guest:
+          type: number
+          example: 2
+
+        rent:
+          type: number
+          example: 3
+
+        amenity:
+          type: array
+          items:
+            type: string
+            example: Breakfast
+          maxItems: 20
+
+        author:
+          type: object
+          example:
+            $ref: '#/components/schemas/user'
+
+        commentCount:
+          type:  number
+          example: 15
+
+        coordinatesAbs:
+          type: object
+          example: {latitude:number, longitude:number}
+
+    rentsOffers:
+      type: array
+      items:
+        type: object
+        example:
+          $ref: '#/components/schemas/rentsOffer'
+      maxItems: 1000
+
+    rentsOfferFavoriteStatus:
+      type: object
+
+      properties:
+        offerId:
+          type: string
+          example: 23143lkjljkjlk
+
+        favorite:
+          type: boolean
+          example: true
+
+    rentsOfferComments:
+      type: array
+      items:
+          type: object
+          example:
+            $ref: '#/components/schemas/rentsOfferComment'
+      maxItems: 100
+
+
+
+    rentsOfferComment:
+      type: object
+
+      properties:
+        commentId:
+          type: string
+          example: 14lkjjkh1
+
+        offerId:
+          type: string
+          example: 1324dffa
+
+        description:
+          type: string
+          example: some film good
+
+        rating:
+          type: string
+          example: 5
+
+        commentDate:
+          type: string
+          example: 14-november-2018
+
+        userInfo:
+          type: object
+          example:
+            $ref: '#/components/schemas/user'
+
+    createRentsOfferComment:
+      type: object
+
+      properties:
+
+        offerId:
+          type: string
+          example: 1324dffa
+
+        description:
+          type: string
+          example: some film good
+
+        rating:
+          type: string
+          example: 5
+
+        userId:
+          type: string
+          example: 134jkhjkh
+
+
+
+
+
+
+
+
+
+
+

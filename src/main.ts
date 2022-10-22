@@ -13,6 +13,7 @@ import UserService from './modules/user/user.service.js';
 import { UserEntity, UserModel } from './modules/user/user.entity.js';
 import { RentsOfferInterface } from './modules/rents-offer/rents-offer.interface.js';
 import { RentsOfferEntity, RentsOfferModel } from './modules/rents-offer/rents-offer.entity.js';
+import RentsOfferService from './modules/rents-offer/rents-offer.service.js';
 
 const applicationContainer = new Container();
 

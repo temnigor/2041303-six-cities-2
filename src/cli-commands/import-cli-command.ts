@@ -38,6 +38,7 @@ export default class ImportCliCommand implements CliCommandInterface {
   }
 
   private async saveOffer(offer: AbsData) {
+    console.log(offer);
     const user = await this.userService.findOrCreate({
       ...offer.author,
       password:DEFAULT_DB_PASSWORD
