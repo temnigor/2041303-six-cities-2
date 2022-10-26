@@ -1,11 +1,14 @@
 
-import { DocumentType, ModelType } from '@typegoose/typegoose/lib/types.js';
+import { BeAnObject, DocumentType, ModelType } from '@typegoose/typegoose/lib/types.js';
 import { inject } from 'inversify';
 import { LoggerInterface } from '../../common/logger/logger.interface';
-import { Component } from '../../type/component-type.ts';
+import { Component } from '../../type/component-type.js';
 import CreateRentsOfferDto from './create-rents-offer.dto';
 import { RentsOfferEntity } from './rents-offer.entity';
 import { RentsOfferInterface } from './rents-offer.interface';
+import updateRentsOfferDto from './update-rents-offer.dto';
+
+const MAX_RENTS_OFFER = 60;
 
 export default class RentsOfferService implements RentsOfferInterface {
   constructor(
@@ -17,6 +20,14 @@ export default class RentsOfferService implements RentsOfferInterface {
     const result = await this.rentsOfferModel.create({dto});
     this.logger.info(`create Rents Offer ${dto.title}`);
     return result;
+  }
+
+  public async find(rentsOfferCount:number = MAX_RENTS_OFFER): Promise<DocumentType<RentsOfferEntity, BeAnObject>[]> {
+    return this.rentsOfferModel.find().slice(rentsOfferCount);
+  }
+
+  public async findOfferById(offerId: string): Promise<DocumentType<RentsOfferEntity> | null> {
+    return this.rentsOfferModel.findById(offerId).exec();
   }
 
   public async findByFavorite():Promise<DocumentType<RentsOfferEntity>[]> {
@@ -31,23 +42,16 @@ export default class RentsOfferService implements RentsOfferInterface {
     return query;
   }
 
-  public async findOfferById(categoryId: string): Promise<DocumentType<RentsOfferEntity> | null> {
-    return this.rentsOfferModel.findById(categoryId).exec();
+  public async updateOfferById(offerId: string, dto: updateRentsOfferDto): Promise<DocumentType<RentsOfferEntity> | null> {
+    return this.rentsOfferModel.findByIdAndUpdate(offerId, dto, {new: true});
   }
 
-  public async findCategoryName(categoryName: string): Promise<DocumentType<RentsOfferEntity> | null> {
-    return this.rentsOfferModel.findOne({categoryName}).exec();
+  public async incComment(offerId: string): Promise<DocumentType<RentsOfferEntity, BeAnObject> | null> {
+    return this.rentsOfferModel.findByIdAndUpdate(offerId, {'$inc': {commentCount:1}}).exec();
   }
 
-  public async findByCategoryNameOrCreate(categoryName: string, dto: CreateRentsOfferDto): Promise<DocumentType<RentsOfferEntity>> {
-    const existedCategory = await this.findCategoryName(categoryName);
-
-    if (existedCategory) {
-      return existedCategory;
-    }
-
-    return this.rentsOfferModel.create(dto);
+  public async deleteOfferById(offerId: string): Promise<void> {
+    this.rentsOfferModel.findByIdAndDelete(offerId);
   }
-
 
 }

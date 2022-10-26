@@ -75,11 +75,11 @@ export default class ImportCliCommand implements CliCommandInterface {
     if(!fileName){
       return console.log('Нет импортированного файла');
     }
-    const url = getUrl(login, password, host, DEFAULT_DB_PORT, dbname);
-
+    const uri = getUrl(login, password, host, DEFAULT_DB_PORT, dbname);
     this.salt = salt;
 
-    await this.databaseService.connect(url);
+
+    await this.databaseService.connect(uri);
 
     const readFile = new TSVReader(fileName.trim());
     readFile.on('line', this.online);

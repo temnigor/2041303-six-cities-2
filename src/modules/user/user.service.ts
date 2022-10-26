@@ -2,11 +2,11 @@ import { DocumentType } from '@typegoose/typegoose';
 import {types} from '@typegoose/typegoose';
 import { BeAnObject } from '@typegoose/typegoose/lib/types.js';
 import { inject, injectable } from 'inversify';
-import { LoggerInterface } from '../../common/logger/logger.interface';
+import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { Component } from '../../type/component-type.js';
 import createUserDto from './create-user.dto';
-import { UserServiceInterface } from './user-service.interface';
-import { UserEntity} from './user.entity';
+import { UserServiceInterface } from './user-service.interface.js';
+import { UserEntity} from './user.entity.js';
 
 @injectable()
 

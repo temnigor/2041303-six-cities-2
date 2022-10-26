@@ -28,7 +28,7 @@ export default class Application {
     this.logger.info('initialization Application');
     this.logger.info(`Get value $PORT: ${this.config.get('PORT')}`);
 
-    const url = getUrl(
+    const uri = getUrl(
       this.config.get('DB_USER'),
       this.config.get('DB_PASSWORD'),
       this.config.get('DB_HOST'),
@@ -36,6 +36,6 @@ export default class Application {
       this.config.get('DB_NAME')
     );
 
-    await this.databaseClient.connect(url);
+    await this.databaseClient.connect(uri);
   }
 }
