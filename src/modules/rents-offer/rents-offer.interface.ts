@@ -1,7 +1,7 @@
 import { DocumentType } from '@typegoose/typegoose';
-import CreateRentsOfferDto from './create-rents-offer.dto';
-import { RentsOfferEntity } from './rents-offer.entity';
-import UpdateRentsOfferDto from './update-rents-offer.dto';
+import CreateRentsOfferDto from './create-rents-offer.dto.js';
+import { RentsOfferEntity } from './rents-offer.entity.js';
+import UpdateRentsOfferDto from './update-rents-offer.dto.js';
 
 export interface RentsOfferInterface {
   create(dot:CreateRentsOfferDto):Promise<DocumentType<RentsOfferEntity>>;

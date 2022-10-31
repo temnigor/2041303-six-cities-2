@@ -65,9 +65,8 @@ export default class ImportCliCommand implements CliCommandInterface {
   }
 
   private onComplete (count:number) {
-
-    console.log(`${count} row imported`);
     this.databaseService.disconnect();
+    console.log(`${count} row imported`);
   }
 
   public async execute(fileName:string, login: string, password: string, host: string, dbname: string, salt: string):Promise<void> {
@@ -78,15 +77,18 @@ export default class ImportCliCommand implements CliCommandInterface {
     const uri = getUrl(login, password, host, DEFAULT_DB_PORT, dbname);
     this.salt = salt;
 
+    this.logger.info(uri);
 
     await this.databaseService.connect(uri);
 
     const readFile = new TSVReader(fileName.trim());
+
     readFile.on('line', this.online);
-    readFile.on('end', this.onComplete);
+    // readFile.on('end', this.onComplete);
     try {
-      readFile.read();
+      await readFile.read();
     } catch (err) {
+      this.logger.info('hello');
       if(!(err instanceof Error)){
         throw err;
       }

@@ -5,6 +5,7 @@ import { inject, injectable } from 'inversify';
 import { LoggerInterface } from '../../common/logger/logger.interface.js';
 import { Component } from '../../type/component-type.js';
 import createUserDto from './create-user.dto';
+import updateUserDto from './update-user.dto.js';
 import { UserServiceInterface } from './user-service.interface.js';
 import { UserEntity} from './user.entity.js';
 
@@ -34,6 +35,7 @@ export default class UserService implements UserServiceInterface {
   }
 
   public async findOrCreate(dto: createUserDto, salt: string): Promise<DocumentType<UserEntity, types.BeAnObject>> {
+
     const existUser = await this.findByEmail(dto.email);
 
     if(existUser) {
@@ -41,5 +43,12 @@ export default class UserService implements UserServiceInterface {
     }
 
     return this.create(dto, salt);
+  }
+
+  public updateUser(userId: string, dto: updateUserDto): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userId, dto, {new: true})
+      .exec();
+
   }
 }

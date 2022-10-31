@@ -15,18 +15,16 @@ export const offerTsvToArray = (rawData:string) => {
       apartmentsImg,
       premium,
       favorite,
-      rating,
       apartmentsType,
       room,
       guest,
       rent,
       amenity,
       author,
-      commentCount,
       coordinatesAbs
     ]) => {
       const [parallel, length] = coordinatesAbs.split(',');
-      const [firstLastName, email, password, userType, avatarImg,] = author.split(',');
+      const [firstLastName, email, userType, avatarImg,] = author.split(',');
       const [name,  surname] = firstLastName.split(' ');
       return({
         title,
@@ -37,14 +35,12 @@ export const offerTsvToArray = (rawData:string) => {
         apartmentsImg:apartmentsImg.split(','),
         premium: Boolean(+premium.replace(/\D+/g,'')),
         favorite: Boolean(+favorite.replace(/\D+/g,'')),
-        rating:+rating.replace(/\D+/g,''),
         apartmentsType,
         room:+room.replace(/\D+/g,''),
         guest:+guest.replace(/\D+/g,''),
         rent:+rent.replace(/\D+/g,''),
         amenity:amenity.split(',').filter((space)=> space.trim() !== ''),
-        author:{name:name, surname:surname, email:email, password:password, userType:Boolean(userType), avatarImg:avatarImg},
-        commentCount:+commentCount.replace(/\D+/g,''),
+        author:{name:name, surname:surname, email:email, userType:Boolean(userType), avatarImg:avatarImg},
         coordinatesAbs:{latitude:+parallel.replace('latitude:','') ,longitude:+length.replace('longitude:','')}
       }as AbsData );
     });

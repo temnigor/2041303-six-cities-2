@@ -4,4 +4,4 @@ export const getUrl = (
   host: string,
   port: number,
   databaseName: string,
-):string => `mongodb://${username}:${password}@${host}:${port}/${databaseName}?authSource=admin`;
+):string => `mongodb://${username}:${password}@${host}:${port}/${databaseName}?authSource=db&authMechanism=SCRAM-SHA-256`;

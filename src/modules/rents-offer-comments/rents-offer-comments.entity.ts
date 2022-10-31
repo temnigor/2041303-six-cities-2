@@ -1,6 +1,6 @@
 import typegoose, { defaultClasses, getModelForClass, Ref } from '@typegoose/typegoose';
-import { RentsOfferEntity } from '../rents-offer/rents-offer.entity';
-import { UserEntity } from '../user/user.entity';
+import { RentsOfferEntity } from '../rents-offer/rents-offer.entity.js';
+import { UserEntity } from '../user/user.entity.js';
 
 export interface RentsOfferCommentsEntity extends defaultClasses.Base {}
 

@@ -1,9 +1,9 @@
 import { config} from 'dotenv';
 import { inject, injectable} from 'inversify';
 import { Component } from '../../type/component-type.js';
-import { LoggerInterface } from '../logger/logger.interface';
+import { LoggerInterface } from '../logger/logger.interface.js';
 import { ConfigInterface } from './config.interface';
-import { configSchema, ConfigSchema } from './config.schema';
+import { configSchema, ConfigSchema } from './config.schema.js';
 
 @injectable()
 

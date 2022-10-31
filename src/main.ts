@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import LoggerService from './common/logger/logger.service.js';
 import Application from './app/application.js';
 import ConfigService from './common/config/config.service.js';
@@ -18,6 +19,7 @@ import { RentsOfferCommentModel, RentsOfferCommentsEntity } from './modules/rent
 import { RentsOfferCommentsInterface } from './modules/rents-offer-comments/rents-offer-comments.interface.js';
 import { RentsOfferCommentService } from './modules/rents-offer-comments/rents-offer-comments.service.js';
 
+
 const applicationContainer = new Container();
 
 applicationContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
@@ -28,7 +30,7 @@ applicationContainer.bind<UserServiceInterface>(Component.UserServiceInterface).
 applicationContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
 applicationContainer.bind<RentsOfferInterface>(Component.RentsOfferInterface).to(RentsOfferService);
 applicationContainer.bind<types.ModelType<RentsOfferEntity>>(Component.RentsOfferModel).toConstantValue(RentsOfferModel);
-applicationContainer.bind<types.ModelType<RentsOfferCommentsInterface>>(Component.RentsOfferCommentsInterface).to(RentsOfferCommentService).inSingletonScope();
+applicationContainer.bind<RentsOfferCommentsInterface>(Component.RentsOfferCommentsInterface).to(RentsOfferCommentService).inSingletonScope();
 applicationContainer.bind<types.ModelType<RentsOfferCommentsEntity>>(Component.RentsOfferCommentModel).toConstantValue(RentsOfferCommentModel);
 
 const application = applicationContainer.get<Application>(Component.Application);
